@@ -1,22 +1,15 @@
-import { auth, signIn, signOut } from "@/auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth";
 type Repo = { id: number; name: string; full_name: string; private: boolean };
 
 export default async function Home() {
-  const session = await auth();
-
-  async function doSignIn() {
-    "use server";
-    await signIn("github");
-  }
-
-  async function doSignOut() {
-    "use server";
-    await signOut();
-  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const session = (await getServerSession(authOptions as any)) as any;
 
   async function createIssue(formData: FormData) {
     "use server";
-    const token = (await auth())?.access_token as string | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const token = ((await getServerSession(authOptions as any)) as any)?.access_token as string | undefined;
     if (!token) return;
     const fullName = String(formData.get("repo") || ""); // owner/repo
     const title = String(formData.get("title") || "");
@@ -60,10 +53,10 @@ export default async function Home() {
       fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial"
     }}>
       <h1>AI Makalah Maker</h1>
-      <p>Demo autentikasi dengan GitHub (NextAuth v5).</p>
+      <p>Demo autentikasi dengan GitHub (NextAuth).</p>
 
       {!session ? (
-        <form action={doSignIn}>
+        <form action="/api/auth/signin/github" method="post">
           <button type="submit" style={{ padding: "8px 14px" }}>Login with GitHub</button>
         </form>
       ) : (
@@ -71,7 +64,7 @@ export default async function Home() {
           <div>
             <strong>Signed in as:</strong> {session.user?.name || session.user?.email}
           </div>
-          <form action={doSignOut}>
+          <form action="/api/auth/signout" method="post">
             <button type="submit" style={{ padding: "8px 14px" }}>Logout</button>
           </form>
 
