@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.redirect(new URL("/?subscribed=1", req.url));
-  } catch (e) {
+  } catch {
     return NextResponse.redirect(new URL("/?subscribed=0", req.url));
   }
 }

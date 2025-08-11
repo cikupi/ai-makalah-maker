@@ -1,4 +1,5 @@
-export default function Landing({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined } }) {
+export default async function Landing({ searchParams }: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const sp = (await searchParams) || {};
   return (
     <main className="lp-root">
       <header className="lp-header">
@@ -35,10 +36,10 @@ export default function Landing({ searchParams }: { searchParams?: { [key: strin
           <div className="hero-text">
             <h1>Buat Makalah Anda <span className="hl">Lebih Cepat</span> dengan AI</h1>
             <p>AI Makalah Maker membantu Anda menulis makalah dengan cepat, tepat, dan berkualitas tinggi.</p>
-            {searchParams?.subscribed === "1" && (
+            {sp?.subscribed === "1" && (
               <div className="banner success">Terima kasih! Anda berhasil berlangganan.</div>
             )}
-            {searchParams?.subscribed === "0" && (
+            {sp?.subscribed === "0" && (
               <div className="banner error">Gagal mendaftar. Periksa data Anda dan coba lagi.</div>
             )}
             <form className="newsletter" action="/api/newsletter" method="post">
