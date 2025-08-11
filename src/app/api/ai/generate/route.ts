@@ -24,30 +24,34 @@ export async function POST(req: NextRequest) {
     const openaiKey = process.env.OPENAI_API_KEY;
     const hfKey = process.env.HUGGING_FACE_TOKEN;
 
-    // Prefer Hugging Face when available (Option A)
+    // Prefer Hugging Face when available (Option A) using HF OpenAI-compatible router
     if (hfKey) {
-      const model = process.env.HUGGING_FACE_MODEL || "mistralai/Mistral-7B-Instruct-v0.3";
-      const prompt = `${system}\n\n${user}`;
-      const res = await fetch(`https://api-inference.huggingface.co/models/${encodeURIComponent(model)}`, {
+      const model = process.env.HUGGING_FACE_MODEL || "openai/gpt-oss-120b:fireworks-ai";
+      const res = await fetch("https://router.huggingface.co/v1/chat/completions", {
         method: "POST",
-        headers: { Authorization: `Bearer ${hfKey}`, "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${hfKey}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          inputs: prompt,
-          parameters: { max_new_tokens: 500, temperature: 0.4, return_full_text: false },
-          options: { wait_for_model: true },
+          model,
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: user },
+          ],
+          temperature: 0.4,
         }),
       });
-      const json = await res.json();
+      const data: unknown = await res.json();
       if (!res.ok) {
-        const msg = (json && (json.error || json.message)) || `HF error: ${res.status}`;
+        let msg = `HF router error: ${res.status}`;
+        if (isRecord(data) && isRecord(data.error) && typeof data.error.message === "string") {
+          msg = data.error.message;
+        }
         return NextResponse.json({ error: msg, provider: "huggingface", model }, { status: 500 });
       }
-      let content = "";
-      if (Array.isArray(json) && json[0]?.generated_text) content = json[0].generated_text as string;
-      else if (typeof json === "object" && (json as any)?.generated_text) content = (json as any).generated_text as string;
-      else if (typeof json === "string") content = json;
-      else if (Array.isArray(json) && json[0]?.translation_text) content = json[0].translation_text as string;
-      if (!content) content = JSON.stringify(json);
+      const d = data as OAChatData;
+      const content = d.choices && d.choices[0]?.message?.content ? d.choices[0].message.content : "";
       return NextResponse.json({ content });
     }
 
@@ -110,21 +114,16 @@ export async function POST(req: NextRequest) {
           }
           // Try HF fallback if available
           if (hfKey) {
-            const hfModel = process.env.HUGGING_FACE_MODEL || "mistralai/Mistral-7B-Instruct-v0.3";
-            const prompt2 = `${system}\n\n${user}`;
-            const r2 = await fetch(`https://api-inference.huggingface.co/models/${encodeURIComponent(hfModel)}`, {
+            const hfModel = process.env.HUGGING_FACE_MODEL || "openai/gpt-oss-120b:fireworks-ai";
+            const r2 = await fetch("https://router.huggingface.co/v1/chat/completions", {
               method: "POST",
               headers: { Authorization: `Bearer ${hfKey}`, "Content-Type": "application/json" },
-              body: JSON.stringify({ inputs: prompt2, parameters: { max_new_tokens: 500, temperature: 0.4, return_full_text: false }, options: { wait_for_model: true } }),
+              body: JSON.stringify({ model: hfModel, messages: [ { role: "system", content: system }, { role: "user", content: user } ], temperature: 0.4 }),
             });
             const j2: unknown = await r2.json();
             if (r2.ok) {
-              let content2 = "";
-              if (Array.isArray(j2) && isRecord(j2[0]) && typeof (j2[0] as HFGenItem).generated_text === "string") content2 = String((j2[0] as HFGenItem).generated_text);
-              else if (isRecord(j2) && typeof (j2 as HFGenItem).generated_text === "string") content2 = String((j2 as HFGenItem).generated_text);
-              else if (typeof j2 === "string") content2 = j2;
-              else if (Array.isArray(j2) && isRecord(j2[0]) && typeof (j2[0] as HFGenItem).translation_text === "string") content2 = String((j2[0] as HFGenItem).translation_text);
-              if (!content2) content2 = JSON.stringify(j2);
+              const dj = j2 as OAChatData;
+              const content2 = dj.choices && dj.choices[0]?.message?.content ? dj.choices[0].message.content : "";
               return NextResponse.json({ content: content2 });
             }
           }
