@@ -6,12 +6,14 @@ export async function GET() {
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
   const hasHF = Boolean(process.env.HUGGING_FACE_TOKEN);
 
-  const provider = hasOpenAI ? "openai" : hasHF ? "huggingface" : "none";
-  const model = hasOpenAI
-    ? process.env.OPENAI_MODEL || "gpt-4o-mini"
-    : hasHF
+  // Prefer HF when available for current deployment configuration
+  const provider = hasHF ? "huggingface" : hasOpenAI ? "openai" : "none";
+  const rawModel = provider === "huggingface"
     ? process.env.HUGGING_FACE_MODEL || "mistralai/Mistral-7B-Instruct-v0.3"
+    : provider === "openai"
+    ? process.env.OPENAI_MODEL || "gpt-4o-mini"
     : undefined;
+  const model = typeof rawModel === "string" ? rawModel.trim() : rawModel;
 
   return NextResponse.json({
     ok: provider !== "none",
