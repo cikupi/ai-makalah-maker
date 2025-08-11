@@ -1,42 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base theme */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-grad: radial-gradient(1200px 600px at 10% -10%, #0ea5e933 0%, transparent 60%),
+              linear-gradient(180deg, #0b1a30 0%, #070b12 70%, #000 100%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html, body { @apply w-full overflow-x-hidden; }
+body { @apply text-slate-200 bg-black; background-image: var(--bg-grad); }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
+/* Smooth transitions */
+.link-hover { @apply transition-all duration-200 hover:opacity-100 hover:-translate-y-px opacity-90; }
+.btn { @apply inline-flex items-center justify-center font-semibold rounded-xl transition-all; }
+.btn-primary { @apply text-white bg-gradient-to-b from-[#1DA1F2] to-[#0ea5e9] shadow; }
+.btn-primary:hover { box-shadow: 0 10px 20px rgba(29,161,242,.24); transform: translateY(-1px); }
