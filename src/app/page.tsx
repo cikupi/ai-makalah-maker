@@ -1,4 +1,5 @@
 import Header from "../components/Header";
+import Image from "next/image";
 
 export default function Landing() {
   return (
@@ -15,26 +16,21 @@ export default function Landing() {
             </h1>
             <p className="text-slate-300 mt-4">Masukkan topik, biarkan AI menulis, dan unduh makalah Anda dalam format .docx. Diskusikan dan revisi langsung dengan AI GPT-5.</p>
             <form action="/editor" className="mt-6 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
-              <input name="topic" required placeholder="Nama Topik" className="w-full rounded-xl bg-[#0f1624] border border-[#243247] px-4 py-3 text-slate-200 outline-none focus:border-[#1DA1F2]" />
+              <input name="topic" required placeholder="Masukan Topik" className="w-full rounded-xl bg-[#0f1624] border border-[#243247] px-4 py-3 text-slate-200 outline-none focus:border-[#1DA1F2]" />
               <button className="btn btn-primary px-5 py-3">Buat Naskah Sekarang</button>
             </form>
-            <div className="mt-4 text-xs text-slate-400">Contoh: Dampak Sosial Media pada Remaja</div>
+            <div className="mt-4 text-xs text-slate-400">Contoh: Perkembangan Teknologi Digital terhadap Keamanan</div>
           </div>
           <div className="flex justify-center">
-            <div className="w-[520px] max-w-full aspect-[4/3] rounded-[40%_60%_50%_50%/50%_40%_60%_50%] border border-white/10 bg-[#0b1220] grid place-items-center shadow-[inset_0_0_0_1px_rgba(255,255,255,.04),0_40px_80px_rgba(0,0,0,.45)]">
-              <svg viewBox="0 0 320 260" className="w-[78%] h-auto" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#1DA1F2"/>
-                    <stop offset="100%" stopColor="#0ea5e9"/>
-                  </linearGradient>
-                </defs>
-                <rect x="20" y="160" width="280" height="14" rx="7" fill="#0b1220" opacity=".2"/>
-                <rect x="60" y="120" width="200" height="30" rx="6" fill="#0b1220" opacity=".25"/>
-                <rect x="70" y="70" width="180" height="60" rx="8" fill="url(#g1)"/>
-                <circle cx="130" cy="95" r="16" fill="#fff"/>
-                <rect x="120" y="108" width="70" height="6" rx="3" fill="#fff" opacity=".9"/>
-              </svg>
+            <div className="relative w-full max-w-[1100px] lg:max-w-[1400px] xl:max-w-[1600px] aspect-[16/12] overflow-hidden drop-shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+              <Image
+                src="/women.svg"
+                alt="Ilustrasi wanita dengan headset di depan laptop"
+                fill
+                sizes="(max-width: 768px) 95vw, (max-width: 1024px) 1100px, (max-width: 1440px) 1400px, 1600px"
+                className="object-cover object-left"
+                priority
+              />
             </div>
           </div>
         </div>
@@ -82,13 +78,11 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-5">
           <h2 className="text-center text-white text-2xl md:text-3xl font-bold">Coba Demo</h2>
           <form action="/editor" className="mt-6 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
-            <input name="topic" placeholder="Dampak Sosial Media pada Remaja" className="w-full rounded-xl bg-[#0f1624] border border-[#243247] px-4 py-3 text-slate-200 outline-none focus:border-[#1DA1F2]" />
+            <input name="topic" placeholder="Perkembangan Teknologi Digital terhadap Keamanan" className="w-full rounded-xl bg-[#0f1624] border border-[#243247] px-4 py-3 text-slate-200 outline-none focus:border-[#1DA1F2]" />
             <button className="btn btn-primary px-5 py-3">Coba Sekarang</button>
           </form>
           <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-5 text-slate-300">
-            <p className="mb-2">Sosial media menciptakan dinamika baru dalam interaksi remaja, memengaruhi persepsi diri, pola komunikasi, dan kebiasaan belajar...</p>
-            <p className="mb-2">Di satu sisi, platform digital membuka akses informasi; di sisi lain, risiko distraksi dan misinformasi perlu dikelola...</p>
-          </div>
+            <p className="mb-2">Judul : Strategi Peningkatan Kualitas Teknologi Digital Polri Guna Penanggulangan Kejahatan Siber Dalam Rangka Mewujudkan Keamanan Dalam Negeri</p>          </div>
         </div>
       </section>
 

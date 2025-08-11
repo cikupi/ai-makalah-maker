@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <header className={`sticky top-0 z-50 transition-all ${scrolled ? "backdrop-blur bg-black/40 border-b border-white/10" : "bg-transparent"}`}>
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
-        <Link href="#home" className="flex items-center gap-3 text-white font-bold">
+        <Link href="/" className="flex items-center gap-3 text-white font-bold">
           <span className="inline-grid place-items-center w-8 h-8 rounded-lg bg-[#1DA1F2]">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="3" y="5" width="10" height="14" rx="2" fill="white"/>
@@ -27,7 +27,7 @@ export default function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-slate-200">
-          <a className="link-hover" href="#home">Home</a>
+          <Link className="link-hover" href="/">Home</Link>
           <a className="link-hover" href="#fitur">Fitur</a>
           <a className="link-hover" href="#carakerja">Cara Kerja</a>
           <a className="link-hover" href="#paket">Paket Harga</a>

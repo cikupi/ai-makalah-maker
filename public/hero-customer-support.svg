@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B1220"/>
+      <stop offset="1" stop-color="#0E1A2D"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#51B3FF"/>
+      <stop offset="1" stop-color="#1DA1F2"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="800" rx="32" fill="url(#bg)"/>
+  <!-- Decorative leaves -->
+  <g opacity="0.25">
+    <path d="M1080 640c-40 10-68 40-88 80 40-10 68-40 88-80Z" fill="#0F2440"/>
+    <path d="M160 620c28 18 46 44 56 76-28-18-46-44-56-76Z" fill="#0F2440"/>
+  </g>
+  <!-- Desk -->
+  <rect x="220" y="560" width="760" height="18" rx="9" fill="#0A1628" opacity="0.6"/>
+  <!-- Laptop -->
+  <g filter="url(#shadow)">
+    <rect x="460" y="420" width="360" height="220" rx="16" fill="#0f2038" stroke="#203a63" stroke-opacity="0.5"/>
+    <rect x="480" y="440" width="320" height="160" rx="12" fill="#0a1a2d"/>
+    <rect x="560" y="620" width="200" height="14" rx="7" fill="#1b2a41"/>
+  </g>
+  <!-- Character -->
+  <g filter="url(#shadow)">
+    <circle cx="420" cy="380" r="56" fill="#1a2a45"/>
+    <rect x="360" y="430" width="160" height="120" rx="24" fill="#122238"/>
+    <rect x="390" y="450" width="100" height="18" rx="9" fill="#223a5c"/>
+  </g>
+  <!-- Headset -->
+  <circle cx="380" cy="380" r="16" fill="#0a1a2d"/>
+  <circle cx="460" cy="380" r="16" fill="#0a1a2d"/>
+  <rect x="380" y="372" width="80" height="16" rx="8" fill="#0a1a2d"/>
+  <!-- Chat bubble -->
+  <g filter="url(#shadow)">
+    <rect x="720" y="240" width="220" height="80" rx="16" fill="url(#accent)"/>
+    <circle cx="780" cy="280" r="16" fill="#fff"/>
+    <rect x="806" y="274" width="100" height="12" rx="6" fill="#EAF6FF"/>
+  </g>
+  <!-- Call icon -->
+  <g opacity="0.9">
+    <circle cx="980" cy="360" r="24" fill="#0f2038"/>
+    <path d="M990 364c-8 6-16 0-22-10 2-4 2-8-2-10l-8-6c-4-2-8 0-10 4-4 10 4 26 16 34s28 10 38 2c4-2 4-6 2-10l-6-8c-2-4-6-4-10-2Z" fill="#51B3FF"/>
+  </g>
+</svg>
