@@ -65,7 +65,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ error: "Missing AI provider key: set OPENAI_API_KEY or HUGGING_FACE_TOKEN" }, { status: 500 });
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message || "AI error" }, { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "AI error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

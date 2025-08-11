@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { Document, Packer, Paragraph } from "docx";
+import { Document, Packer, Paragraph, HeadingLevel } from "docx";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       sections: [
         {
           properties: {},
-          children: [new Paragraph({ text: title, heading: "HEADING_1" as any }), ...paragraphs],
+          children: [new Paragraph({ text: title, heading: HeadingLevel.HEADING_1 }), ...paragraphs],
         },
       ],
     });
@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
         "Content-Disposition": `attachment; filename="${filename}"`,
       },
     });
-  } catch (e: any) {
-    return new Response(JSON.stringify({ error: e?.message || "Export error" }), { status: 500 });
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : "Export error";
+    return new Response(JSON.stringify({ error: message }), { status: 500 });
   }
 }

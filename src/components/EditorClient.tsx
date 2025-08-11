@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import type React from "react";
 
 export default function EditorClient() {
   const [title, setTitle] = useState("Makalah Baru");
@@ -37,7 +38,10 @@ export default function EditorClient() {
       const a = document.createElement("a");
       a.href = url; a.download = `${title.replace(/[^a-z0-9-_]+/gi, "-") || "makalah"}.docx`; a.click();
       URL.revokeObjectURL(url);
-    } catch (e: any) { alert(e?.message || "Error export"); }
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Error export";
+      alert(message);
+    }
     finally { setLoadingDocx(false); }
   }
 
@@ -56,7 +60,12 @@ export default function EditorClient() {
             <button onClick={exportDocx} disabled={loadingDocx} className="btn btn-primary px-3 py-1.5">{loadingDocx?"Mengekspor...":"Export .docx"}</button>
           </div>
         </div>
-        <div className="text-slate-200 min-h-[48vh] rounded-lg bg-black/20 border border-white/10 p-3" contentEditable suppressContentEditableWarning onInput={(e)=>setContent((e.target as HTMLElement).innerText)}>
+        <div
+          className="text-slate-200 min-h-[48vh] rounded-lg bg-black/20 border border-white/10 p-3"
+          contentEditable
+          suppressContentEditableWarning
+          onInput={(e: React.FormEvent<HTMLDivElement>) => setContent(e.currentTarget.innerText)}
+        >
           <p className="mb-3">Mulai menulis di sini...</p>
         </div>
       </div>
