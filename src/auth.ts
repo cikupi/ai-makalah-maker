@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import type { JWT } from "next-auth/jwt";
-import type { Session, Account } from "next-auth";
+import type { Session } from "next-auth";
 
 export const {
   handlers: { GET, POST },
@@ -21,10 +21,10 @@ export const {
     }),
   ],
   callbacks: {
-    async jwt({ token, account }: { token: JWT; account?: Account | null }) {
+    async jwt({ token, account }: { token: JWT; account?: { [k: string]: unknown } | null }) {
       if (account) {
         // Persist access token from GitHub (property provided at runtime by provider)
-        const acc = account as Account & { access_token?: string };
+        const acc = account as { access_token?: string };
         token.access_token = acc.access_token;
       }
       return token;
