@@ -7,6 +7,13 @@ type OAOutputItem = { type?: string; text?: string };
 type OAResponsesData = { output_text?: string; output?: OAOutputItem[]; error?: { message?: string } };
 type OAChatData = { choices?: Array<{ message?: { content?: string } }>; error?: { message?: string } };
 type HFGenItem = { generated_text?: string; translation_text?: string };
+type GeminiPart = { text?: string };
+type GeminiContent = { role?: string; parts?: GeminiPart[] };
+type GeminiResponse = {
+  candidates?: Array<{ content?: GeminiContent; finishReason?: string; safetyRatings?: unknown[] }>;
+  promptFeedback?: unknown;
+  error?: { message?: string };
+};
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -23,6 +30,42 @@ export async function POST(req: NextRequest) {
 
     const openaiKey = process.env.OPENAI_API_KEY;
     const hfKey = process.env.HUGGING_FACE_TOKEN;
+    const googleKey = process.env.GOOGLE_API_KEY;
+
+    // Prefer Google Gemini when available (highest priority)
+    if (googleKey) {
+      const model = (process.env.GOOGLE_MODEL || "gemini-1.5-flash").trim();
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(googleKey)}`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: "user",
+              parts: [
+                { text: system },
+                { text: user },
+              ],
+            },
+          ],
+          generationConfig: { temperature: 0.4 },
+        }),
+      });
+      const data: unknown = await res.json();
+      if (!res.ok) {
+        let msg = `Gemini error: ${res.status}`;
+        if (isRecord(data) && isRecord((data as GeminiResponse).error) && typeof (data as GeminiResponse).error?.message === "string") {
+          msg = (data as GeminiResponse).error!.message as string;
+        }
+        return NextResponse.json({ error: msg, provider: "gemini", model }, { status: 500 });
+      }
+      const d = data as GeminiResponse;
+      const content = d.candidates && d.candidates[0]?.content?.parts && d.candidates[0].content.parts[0]?.text
+        ? String(d.candidates[0].content.parts[0].text)
+        : "";
+      return NextResponse.json({ content });
+    }
 
     // Prefer Hugging Face when available (Option A) using HF OpenAI-compatible router
     if (hfKey) {
