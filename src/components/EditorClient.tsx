@@ -162,14 +162,19 @@ export default function EditorClient() {
       root.classList.toggle('dark', isDark);
     };
     apply(theme);
+    // Modern event listener
     const onChange = () => { if (theme === 'system') apply('system'); };
     // Fallback for older browsers
     if (typeof media.addEventListener === 'function') {
       media.addEventListener('change', onChange);
       return () => media.removeEventListener('change', onChange);
-    } else if (typeof (media as any).addListener === 'function') {
-      (media as any).addListener(onChange);
-      return () => (media as any).removeListener(onChange);
+    } else if ('addListener' in media && typeof media.addListener === 'function') {
+      // Older Safari versions use addListener/removeListener with MediaQueryListEvent
+      const legacyListener = function(this: MediaQueryList, _e: MediaQueryListEvent) {
+        onChange();
+      };
+      media.addListener(legacyListener);
+      return () => media.removeListener(legacyListener);
     }
     return () => {};
   }, [theme]);
