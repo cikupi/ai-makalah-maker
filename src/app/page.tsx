@@ -1,95 +1,47 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { auth, signIn, signOut } from "@/auth";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
+  async function doSignIn() {
+    "use server";
+    await signIn("github");
+  }
+
+  async function doSignOut() {
+    "use server";
+    await signOut();
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <main style={{
+      maxWidth: 720,
+      margin: "0 auto",
+      padding: 24,
+      fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial"
+    }}>
+      <h1>AI Makalah Maker</h1>
+      <p>Demo autentikasi dengan GitHub (NextAuth v5).</p>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+      {!session ? (
+        <form action={doSignIn}>
+          <button type="submit" style={{ padding: "8px 14px" }}>Login with GitHub</button>
+        </form>
+      ) : (
+        <div style={{ display: "grid", gap: 12 }}>
+          <div>
+            <strong>Signed in as:</strong> {session.user?.name || session.user?.email}
+          </div>
+          <form action={doSignOut}>
+            <button type="submit" style={{ padding: "8px 14px" }}>Logout</button>
+          </form>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      )}
+
+      <hr style={{ margin: "24px 0" }} />
+      <p>
+        Langkah selanjutnya: tampilkan daftar repositori, buat issue, dan fitur commit file langsung dari web.
+      </p>
+    </main>
   );
 }

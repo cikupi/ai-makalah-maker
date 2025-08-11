@@ -7,12 +7,11 @@ const repoFromCI = process.env.GITHUB_REPOSITORY?.split("/")[1];
 const computedBasePath = process.env.BASE_PATH || (repoFromCI ? `/${repoFromCI}` : undefined);
 
 const nextConfig: NextConfig = {
-  // Enable static export for GitHub Pages
-  output: "export",
-  images: { unoptimized: true },
-  // Only apply basePath/assetPrefix in CI (not during local dev)
+  // Enable static export ONLY for GitHub Pages builds
   ...(computedBasePath
     ? {
+        output: "export" as const,
+        images: { unoptimized: true },
         basePath: computedBasePath,
         assetPrefix: computedBasePath,
       }
