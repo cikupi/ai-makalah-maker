@@ -23,14 +23,15 @@ export const {
   callbacks: {
     async jwt({ token, account }: { token: JWT; account?: Account | null }) {
       if (account) {
-        // Persist access token from GitHub
-        token.access_token = (account as any).access_token;
+        // Persist access token from GitHub (property provided at runtime by provider)
+        const acc = account as Account & { access_token?: string };
+        token.access_token = acc.access_token;
       }
       return token;
     },
     async session({ session, token }: { session: Session; token: JWT }) {
       // Expose access token on session for server actions
-      (session as any).access_token = token.access_token;
+      session.access_token = token.access_token as string | undefined;
       return session;
     },
   },

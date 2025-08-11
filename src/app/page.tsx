@@ -16,13 +16,13 @@ export default async function Home() {
 
   async function createIssue(formData: FormData) {
     "use server";
-    const token = (await auth() as any)?.access_token as string | undefined;
+    const token = (await auth())?.access_token as string | undefined;
     if (!token) return;
     const fullName = String(formData.get("repo") || ""); // owner/repo
     const title = String(formData.get("title") || "");
     const body = String(formData.get("body") || "");
     if (!fullName || !title) return;
-    const res = await fetch(`https://api.github.com/repos/${fullName}/issues`, {
+    await fetch(`https://api.github.com/repos/${fullName}/issues`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -36,7 +36,7 @@ export default async function Home() {
 
   let repos: Repo[] = [];
   if (session) {
-    const token = (session as any).access_token as string | undefined;
+    const token = session.access_token as string | undefined;
     if (token) {
       const res = await fetch("https://api.github.com/user/repos?per_page=50&sort=updated", {
         headers: {
