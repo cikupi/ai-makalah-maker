@@ -16,11 +16,12 @@ export default function Header() {
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 text-white font-bold">
           <span className="inline-grid place-items-center w-8 h-8 rounded-lg bg-[#1DA1F2]">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="5" width="10" height="14" rx="2" fill="white"/>
-              <circle cx="8" cy="10" r="1.2" fill="#1DA1F2"/>
-              <circle cx="11" cy="10" r="1.2" fill="#1DA1F2"/>
-              <path d="M14 7l4-2v14l-4 2V7z" fill="#0b1220"/>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="32" height="32">
+              <circle cx="100" cy="100" r="72" fill="#0A1931"/>
+              <circle cx="100" cy="100" r="48" fill="#1DA1F2"/>
+              <circle cx="100" cy="100" r="26" fill="#081226"/>
+              <circle cx="110" cy="90" r="6" fill="#fff" opacity="0.9"/>
+              <path d="M60 160 L140 160" stroke="#081226" strokeWidth="8" strokeLinecap="round" opacity="0.2"/>
             </svg>
           </span>
           <span>AI Makalah Maker</span>

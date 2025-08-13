@@ -1,4 +1,5 @@
 import Header from "../components/Header";
+import LandingForm from "../components/LandingForm";
 import Image from "next/image";
 
 export default function Landing() {
@@ -14,11 +15,8 @@ export default function Landing() {
             <h1 className="text-white font-extrabold leading-tight text-4xl md:text-5xl">
               Buat Makalah Anda dalam <span className="text-[#1DA1F2]">Hitungan Menit</span> dengan AI
             </h1>
-            <p className="text-slate-300 mt-4">Masukkan topik, biarkan AI menulis, dan unduh makalah Anda dalam format .docx. Diskusikan dan revisi langsung dengan AI GPT-5.</p>
-            <form action="/editor" className="mt-6 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
-              <input name="topic" required placeholder="Masukan Topik" className="w-full rounded-xl bg-[#0f1624] border border-[#243247] px-4 py-3 text-slate-200 outline-none focus:border-[#1DA1F2]" />
-              <button className="btn btn-primary px-5 py-3">Buat Naskah Sekarang</button>
-            </form>
+            <p className="text-slate-300 mt-4">Masukkan topik, biarkan AI menulis, dan unduh makalah Anda dalam format .docx atau .pdf. Diskusikan dan revisi langsung dengan AI.</p>
+            <LandingForm />
             <div className="mt-4 text-xs text-slate-400">Contoh: Perkembangan Teknologi Digital terhadap Keamanan</div>
           </div>
           <div className="flex justify-center">

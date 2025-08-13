@@ -21,12 +21,33 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as { topic?: string; style?: string };
+    const body = (await req.json()) as { topic?: string; style?: string; words?: string; subject?: string };
     const topic = (body.topic || "Makalah Tanpa Judul").toString().slice(0, 200);
     const style = (body.style || "ilmiah ringkas").toString().slice(0, 100);
+    const words = typeof body.words === "string" ? body.words : undefined;
+    const subject = (body.subject || "").toString().slice(0, 200).trim();
+
+    // Derive target length guidance
+    let lengthHint = "Tulis 4-6 paragraf (400-700 kata).";
+    let genConfigTokens = 500; // used for HF inference api fallback
+    if (words) {
+      const m = words.match(/^(\d{2,5})\s*-\s*(\d{2,5})$/);
+      if (m) {
+        const min = Math.max(100, Math.min(8000, parseInt(m[1], 10)));
+        const max = Math.max(min, Math.min(10000, parseInt(m[2], 10)));
+        const mid = Math.floor((min + max) / 2);
+        // Rough paragraph estimate: ~120-180 words per paragraph
+        const paraMin = Math.max(3, Math.round(min / 180));
+        const paraMax = Math.max(paraMin + 1, Math.round(max / 160));
+        lengthHint = `Targetkan ${paraMin}-${paraMax} paragraf (~${min}-${max} kata, ±10%).`;
+        // Approximate token budget for HF (very rough: words * 1.5)
+        genConfigTokens = Math.min(4096, Math.max(400, Math.round((max - min) / 2 * 1.5)));
+      }
+    }
 
     const system = `Anda adalah asisten penulis akademik. Tulis naskah makalah pembuka yang informatif, terstruktur, dengan bahasa Indonesia formal. Sertakan: Pendahuluan, Latar Belakang singkat, Rumusan Masalah poin, dan Tujuan Penelitian poin.`;
-    const user = `Topik: ${topic}. Gaya/Struktur: ${style || "ilmiah ringkas"}. Tulis 4-6 paragraf (400-700 kata).`;
+    const perspective = subject ? ` Perspektif penulisan: ${subject}.` : "";
+    const user = `Topik: ${topic}. Gaya/Struktur: ${style || "ilmiah ringkas"}.${perspective} ${lengthHint}`;
 
     const openaiKey = process.env.OPENAI_API_KEY;
     const hfKey = process.env.HUGGING_FACE_TOKEN;
@@ -190,7 +211,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           inputs: prompt,
-          parameters: { max_new_tokens: 500, temperature: 0.4, return_full_text: false },
+          parameters: { max_new_tokens: genConfigTokens, temperature: 0.4, return_full_text: false },
           options: { wait_for_model: true },
         }),
       });
