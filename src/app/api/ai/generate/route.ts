@@ -52,6 +52,38 @@ export async function POST(req: NextRequest) {
     const openaiKey = process.env.OPENAI_API_KEY;
     const hfKey = process.env.HUGGING_FACE_TOKEN;
     const googleKey = process.env.GOOGLE_API_KEY;
+    const preferOpenAI = process.env.PREFERRED_PROVIDER === "openai" || process.env.NODE_ENV !== "production";
+
+    // Prefer OpenAI locally (development) or when explicitly requested via PREFERRED_PROVIDER
+    if (preferOpenAI && openaiKey) {
+      const model = (process.env.OPENAI_MODEL || "gpt-4o-mini").trim();
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${openaiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: user },
+          ],
+          temperature: 0.4,
+        }),
+      });
+      const data: unknown = await res.json();
+      if (!res.ok) {
+        let msg = `OpenAI error: ${res.status}`;
+        if (isRecord(data) && isRecord((data as any).error) && typeof (data as any).error?.message === "string") {
+          msg = (data as any).error!.message as string;
+        }
+        return NextResponse.json({ error: msg, provider: "openai", model }, { status: 500 });
+      }
+      const d = data as OAChatData;
+      const content = d.choices && d.choices[0]?.message?.content ? d.choices[0].message.content : "";
+      return NextResponse.json({ content });
+    }
 
     // Prefer Google Gemini when available (highest priority)
     if (googleKey) {
