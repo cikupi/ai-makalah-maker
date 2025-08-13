@@ -85,11 +85,16 @@ export async function POST(req: NextRequest) {
     }
     const filename = `${title.replace(/[^a-z0-9-_]+/gi, "-") || "makalah"}.docx`;
 
-    // Normalize to Uint8Array which is a valid BodyInit in Node runtime
+    // Normalize to Uint8Array and return as Blob to satisfy BodyInit typing across environments
     const respBody = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
-    return new Response(respBody, {
+    // Create a concrete ArrayBuffer (not SharedArrayBuffer) to satisfy BlobPart typing
+    const ab = new ArrayBuffer(respBody.byteLength);
+    new Uint8Array(ab).set(respBody);
+    const blob = new Blob([ab], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+    return new Response(blob, {
       status: 200,
       headers: {
+        // Blob already has the content-type, but we also set it explicitly for clarity
         "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "Content-Disposition": `attachment; filename="${filename}"`,
       },
