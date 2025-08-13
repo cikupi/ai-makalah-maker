@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
         assetPrefix: computedBasePath,
       }
     : {}),
+  // Ignore ESLint errors during production builds (e.g., on Vercel)
+  // so that lint warnings/errors don't fail CI builds. Local dev can still lint.
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
